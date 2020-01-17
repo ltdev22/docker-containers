@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+    app:
+        image: laravel-www
+        container_name: laravel-www
+        build:
+            context: .
+            dockerfile: docker/Dockerfile
+        env_file:
+            - .docker.env
+        volumes:
+            - .:/var/www/html
+        ports:
+            - 9000:80
+        depends_on:
+            - mysql
+            - redis
+
+    # we can use the same image we use for the app for schedules and queues - check start.sh
+    # Don't get confused, you build the app! - docker-compose build app
+    scheduler:
+        image: laravel-www
+        container_name: laravel-scheduler
+        env_file:
+            - .docker.env
+        environment:
+            CONTAINER_ROLE: scheduler
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - app
+            - mysql
+            - redis
+
+    queue:
+        image: laravel-www
+        container_name: laravel-queue
+        env_file:
+            - .docker.env
+        environment:
+            CONTAINER_ROLE: queue
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - app
+            - mysql
+            - redis
+
+    mysql:
+        image: mysql:5.7
+        container_name: laravel-mysql
+        environment: # btw should use env_file instead and get the settings from the .env file, but lets leave it for now
+            MYSQL_DATABASE: homestead
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USERNAME: homestead
+            MYSQL_PASSWORD: password
+        volumes:
+            - dbdata:/var/lib/mysql
+        ports:
+            - 3306:3306 # nice tip: if there's a local database installed, use 13306:3306 instead ;-)
+    redis: # nice to use redis for sessions, queues and caching
+        image: redis:4-alpine
+        container_name: laravel-redis
+        ports:
+            - 6379:6379 # or 16379:6379
+        volumes:
+            - redis:/data
+
+# to persist data after shutting down docker
+volumes:
+    dbdata:
+        driver: 'local'
+    redis:
+        driver: 'local'

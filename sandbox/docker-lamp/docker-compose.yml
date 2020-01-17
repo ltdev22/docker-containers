@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+    app:
+        build: .
+        ports:
+            - 9000:80
+        volumes:
+            - .:/srv/app # will allow us to edit the cwd and see them immediately in the /srv/app dir of the running container
+        depends_on: 
+            - mariadb
+    mariadb:
+        image: mariadb:10.1
+        ports:
+            - 13306:3306
+        volumes:
+            - mariadb:/var/lib/mysql # you get this from the image docs    
+        environment: # should read the settings from the .env file instead, but for now lets keep it thir way.
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: homestead
+            MYSQL_USER: homestead
+            MYSQL_PASSWORD: password
+
+volumes:
+    mariadb:
+        driver: local

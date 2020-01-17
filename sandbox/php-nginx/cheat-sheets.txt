@@ -1,0 +1,7 @@
+
+
+// To copy conf setting from nginx container to docker
+docker cp nginx-container:/etc/nginx/nginx.conf docker/nginx/nginx.conf
+
+// path to override - in nginx-container
+cat /etc/nginx/conf.d/default.conf
