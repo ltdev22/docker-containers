@@ -1,9 +1,5 @@
 FROM node:lts-alpine
 LABEL maintainer="Lykourgos Tsirikos <lykourgos.tsirikos@gmail.com>"
-
-RUN npm install -g npm install -g @vue/cli
 RUN mkdir /app
 WORKDIR /app
-ADD . /app
-
-CMD ['npm', 'install']
+RUN npm install -g npm install -g @vue/cli
