@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+    web:
+        container_name: apache
+        # container_name: nginx
+        build:
+            context: .
+            dockerfile: docker/apache/Dockerfile
+            # dockerfile: docker/nginx/Dockerfile
+        volumes:
+            - ./codebase/public:/var/www/html/public
+        ports:
+            - "8888:80"
+        depends_on:
+            - php
+        networks:
+            - local_frontend
+            - local_backend
+    php:
+        container_name: php
+        build:
+            context: .
+            dockerfile: docker/php/Dockerfile
+        ports:
+            - "9000:9000"
+        volumes:
+            - ./codebase:/var/www/html
+        networks:
+            - local_backend
+    # mysql:
+    #     container_name: mysql
+    #     image: mysql:5.7
+    #     # image: mariadb:10.6
+    #     volumes:
+    #         - dbdata:/var/lib/mysql
+    #     ports:
+    #         - 4306:3306
+    #     networks:
+    #         - local_backend
+    #     # env_file:
+    #     #     - ./docker/docker.env
+    #     #     - ./codebase/.env
+    composer:
+        container_name: composer
+        image: composer:latest
+        volumes:
+            - ./codebase:/var/www/html
+        working_dir: /var/www/html
+        depends_on:
+            - php
+        networks:
+            - local_backend
+    # artisan:
+    # npm:
+    # redis:
+networks:
+    local_backend:
+    local_frontend:
+        driver: 'bridge'
