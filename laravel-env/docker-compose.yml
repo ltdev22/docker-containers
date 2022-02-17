@@ -8,39 +8,49 @@ services:
             context: .
             dockerfile: docker/apache/Dockerfile
             # dockerfile: docker/nginx/Dockerfile
+            args:
+                - PROJECT_ROOT=${PROJECT_ROOT:-source}
         volumes:
             - ./codebase/public:/var/www/html/public
         ports:
             - "8888:80"
         depends_on:
             - php
+            - mysql
         networks:
-            - local_frontend
-            - local_backend
+            - laravel_net_frontend
+            - laravel_net_backend
     php:
         container_name: php
         build:
             context: .
             dockerfile: docker/php/Dockerfile
+            args:
+                - PROJECT_ROOT=${PROJECT_ROOT:-source}
         ports:
             - "9000:9000"
         volumes:
             - ./codebase:/var/www/html
         networks:
+            - laravel_net_backend
+    mysql:
+        container_name: mysql
+        # image: mysql:5.7
+        image: mariadb:10.6
+        volumes:
+            - dbdata:/var/lib/mysql
+        ports:
+            - 4306:3306
+        networks:
             - local_backend
-    # mysql:
-    #     container_name: mysql
-    #     image: mysql:5.7
-    #     # image: mariadb:10.6
-    #     volumes:
-    #         - dbdata:/var/lib/mysql
-    #     ports:
-    #         - 4306:3306
-    #     networks:
-    #         - local_backend
-    #     # env_file:
-    #     #     - ./docker/docker.env
-    #     #     - ./codebase/.env
+        environment:
+            MYSQL_DATABASE: laravel_app
+            MYSQL_USER: laravel
+            MYSQL_PASSWORD: secret
+            MYSQL_ROOT_PASSWORD: root
+        # env_file:
+        #     - ./docker/docker.env
+        #     - ./source/.env
     composer:
         container_name: composer
         image: composer:latest
@@ -50,11 +60,47 @@ services:
         depends_on:
             - php
         networks:
+            - laravel_net_backend
+    npm:
+        container_name: npm
+        image: node:lts-alpine
+        ports:
+            - 3000:3000
+        working_dir: /var/www/html
+        entrypoint: ["npm"]
+        volumes:
+            - ./source:/var/www/html
+        networks:
+            - local_frontend
+    artisan:
+        container_name: artisan
+        build:
+            context: .
+            dockerfile: docker/php/Dockerfile
+        entrypoint: ["php", "/var/www/html/artisan"]
+        working_dir: /var/www/html/
+        depends_on:
+            - mysql
+        volumes:
+            - ./source:/var/www/html
+        networks:
             - local_backend
-    # artisan:
-    # npm:
+    phpunit:
+        container_name: phpunit
+        build:
+            context: .
+            dockerfile: docker/php/Dockerfile
+        entrypoint: ["/var/www/html/vendor/bin/phpunit"]
+        working_dir: /var/www/html/
+        volumes:
+            - ./source:/var/www/html
+        networks:
+            - local_backend
     # redis:
 networks:
-    local_backend:
-    local_frontend:
+    laravel_net_backend:
+    laravel_net_frontend:
         driver: 'bridge'
+volumes:
+    dbdata:
+        driver: 'local'

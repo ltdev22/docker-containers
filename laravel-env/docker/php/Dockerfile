@@ -1,5 +1,8 @@
 FROM php:8.1-fpm-alpine
 
+ENV PROJECT_ROOT=${PROJECT_ROOT}
+ARG PROJECT_ROOT=${PROJECT_ROOT}
+
 # Install any additional dependencies like pdo, xdebug etc
 RUN apk add --no-cache \
     $PHPIZE_DEPS \
@@ -9,12 +12,12 @@ RUN apk add --no-cache \
     && docker-php-ext-enable xdebug
 
 # Set up the php configuration in the container
-COPY docker/php/php.ini /usr/local/etc/php/php.ini
-COPY docker/php/conf.d/*.ini /usr/local/etc/php/conf.d/
+COPY ./docker/php/php.ini /usr/local/etc/php/php.ini
+COPY ./docker/php/conf.d/*.ini /usr/local/etc/php/conf.d/
 
 # Copy the codebase in the working dir of the container
 WORKDIR /var/www/html
-COPY ./codebase /var/www/html
+COPY ./${PROJECT_ROOT} /var/www/html
 
 RUN chown -R www-data:www-data /var/www/html
 
