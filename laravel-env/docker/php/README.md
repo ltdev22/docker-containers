@@ -25,6 +25,14 @@ Reminder: in order to run the migrations successfully we need to be suse we have
 See the main README.md file for more details.
 
 
+### Run schedule and queue commands
+
+Any schedule or queue tasks can either run through the *artisan* service like:
+`docker-compose run --rm artisan queue:work --queue=foo --tries=3 --stop-when-empty` or `docker-compose run --rm artisan schedule:work` etc, but to stop them will 
+need to run `docker-compose stop CONTAINER_ID`. However we can also use the *scheduler* and the *queue* services like this:
+`docker-compose run -d scheduler`
+
+
 ### Running PHP Unit tests
 
 Likewise with *artisan* container we can run the same way a *phpunit* container for running any tests we have

@@ -10,6 +10,11 @@ RUN apk add --no-cache \
     && docker-php-ext-install pdo pdo_mysql \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug
+# Install redis extension
+# RUN apk --no-cache add pcre-dev ${PHPIZE_DEPS} \
+#     && pecl install redis \
+#     && docker-php-ext-enable redis \
+#     && apk del pcre-dev ${PHPIZE_DEPS}
 
 # Set up the php configuration in the container
 COPY ./docker/php/php.ini /usr/local/etc/php/php.ini

@@ -51,3 +51,10 @@ To run any npm commands we would need to run the npm container and then terminat
 - To install any npm packages `docker-compose run --rm npm install --save-dev v-money`
 - To compile assets `docker-compose run --rm npm run dev`
 - To watch any changes `docker-compose run --rm npm run watch`
+
+
+### Redis
+- the php extension needs to be installed (uncomment the code on php/Dockerfile)
+- the redis container is also available (uncomment the *redis* service in docker-compose.yml)
+- install the Laravel-Redis extension `docker-compose run --rm composer require predis/predis
+- set REDIS_HOST=redis in *.env* in Laravel application
