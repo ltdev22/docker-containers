@@ -1,11 +1,11 @@
 FROM php:8.1-fpm-alpine
 
-ENV PROJECT_ROOT=${PROJECT_ROOT}
 ARG PROJECT_ROOT=${PROJECT_ROOT}
+ENV PROJECT_ROOT=${PROJECT_ROOT}
 
 # Install any additional dependencies like pdo, xdebug etc
 RUN apk add --no-cache \
-    $PHPIZE_DEPS \
+    ${PHPIZE_DEPS} \
     openssl-dev \
     && docker-php-ext-install pdo pdo_mysql \
     && pecl install xdebug \

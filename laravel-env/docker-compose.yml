@@ -127,6 +127,8 @@ services:
     #     image: redis:alpine
     #     ports:
     #         - 6379:6379
+    #     volumes:
+    #         - redis:/data
     #     networks:
     #         - local_backend
 networks:
@@ -134,5 +136,6 @@ networks:
     laravel_net_frontend:
         driver: 'bridge'
 volumes:
+    # redis:
     dbdata:
         driver: 'local'
