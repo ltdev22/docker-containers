@@ -39,3 +39,7 @@ Likewise with *artisan* container we can run the same way a *phpunit* container 
 - `docker-compose run --rm phpunit`
 
 Note that tests can be also run and through *artisan* as `docker-compose run --rm artisan test`, we just have another way of running ther on the packground.
+
+
+### Useful resources
+- Xdebug v3: https://matthewsetter.com/setup-step-debugging-php-xdebug3-docker/
