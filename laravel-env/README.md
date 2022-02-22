@@ -2,8 +2,12 @@
 
 Laravel (dev) environment setup on docker with each component (web server, php, db etc) to be on a separate container.
 
- Run `docker-compose up` and optionaly add the `-d` option at the end to run on detached mode to launch the application. By default 
- the Laravel app lives inside the *codebase* folder. The *docker* folder contains a list of sub-folders, each sub-folder has the dockerfiles for the required images and the configuration for each of the containers to be generated. In each sub-folder there's also a README.md file with info and a list of commands to use for the containers.
+
+Before starting the docker containers we need to run this command `cp docker/docker.env.example docker/docker.env` to create the *docker.env* file. Then open the file
+and set the values for the environment variables.
+
+Run `docker-compose up` and optionaly add the `-d` option at the end to run on detached mode to launch the application. By default 
+the Laravel app lives inside the *codebase* folder. The *docker* folder contains a list of sub-folders, each sub-folder has the dockerfiles for the required images and the configuration for each of the containers to be generated. In each sub-folder there's also a README.md file with info and a list of commands to use for the containers.
 
  To stop the docker containers run `docker-compose stop` or *ctrl+c* if running on the foreground, or kill the containers using `docker-compose down -v`
 

@@ -11,15 +11,18 @@ services:
             args:
                 - PROJECT_ROOT=${PROJECT_ROOT:-source}
         volumes:
-            - ./codebase/public:/var/www/html/public
+            - ./source/public:/var/www/html/public
         ports:
             - "8888:80"
         depends_on:
             - php
             - mysql
+            - redis
         networks:
-            - laravel_net_frontend
-            - laravel_net_backend
+            - local_frontend
+            - local_backend
+        env_file:
+            - ./docker/docker.env
     php:
         container_name: php
         build:
@@ -30,9 +33,11 @@ services:
         ports:
             - "9000:9000"
         volumes:
-            - ./codebase:/var/www/html
+            - ./source:/var/www/html
         networks:
-            - laravel_net_backend
+            - local_backend
+        env_file:
+            - ./docker/docker.env
     mysql:
         container_name: mysql
         # image: mysql:5.7
@@ -44,23 +49,27 @@ services:
         networks:
             - local_backend
         environment:
-            MYSQL_DATABASE: laravel_app
+            MYSQL_DATABASE: laracommerce
             MYSQL_USER: laravel
             MYSQL_PASSWORD: secret
             MYSQL_ROOT_PASSWORD: root
-        # env_file:
-        #     - ./docker/docker.env
+        env_file:
+            - ./docker/docker.env
         #     - ./source/.env
     composer:
         container_name: composer
-        image: composer:latest
+        build: 
+            context: .
+            dockerfile: docker/composer/Dockerfile
         volumes:
-            - ./codebase:/var/www/html
+            - ./source:/var/www/html
         working_dir: /var/www/html
         depends_on:
             - php
         networks:
-            - laravel_net_backend
+            - local_backend
+        env_file:
+            - ./docker/docker.env
     npm:
         container_name: npm
         image: node:lts-alpine
@@ -72,6 +81,8 @@ services:
             - ./source:/var/www/html
         networks:
             - local_frontend
+        env_file:
+            - ./docker/docker.env
     artisan:
         container_name: artisan
         build:
@@ -85,6 +96,8 @@ services:
             - ./source:/var/www/html
         networks:
             - local_backend
+        env_file:
+            - ./docker/docker.env
     phpunit:
         container_name: phpunit
         build:
@@ -96,6 +109,8 @@ services:
             - ./source:/var/www/html
         networks:
             - local_backend
+        env_file:
+            - ./docker/docker.env
     scheduler:
         container_name: scheduler
         build:
@@ -109,6 +124,8 @@ services:
             - ./source:/var/www/html
         networks:
             - local_backend
+        env_file:
+            - ./docker/docker.env
     queue:
         container_name: queue
         build:
@@ -122,6 +139,8 @@ services:
             - ./source:/var/www/html
         networks:
             - local_backend
+        env_file:
+            - ./docker/docker.env
     # redis:
     #     container_name: redis
     #     image: redis:alpine
@@ -131,9 +150,11 @@ services:
     #         - redis:/data
     #     networks:
     #         - local_backend
+    #     env_file:
+    #         - ./docker/docker.env
 networks:
-    laravel_net_backend:
-    laravel_net_frontend:
+    local_backend:
+    local_frontend:
         driver: 'bridge'
 volumes:
     # redis:
