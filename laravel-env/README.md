@@ -4,7 +4,7 @@ Laravel (dev) environment setup on docker with each component (web server, php, 
 
 
 Before starting the docker containers we need to run this command `cp docker/docker.env.example docker/docker.env` to create the *docker.env* file. Then open the file
-and set the values for the environment variables.
+and set the values for the environment variables. Also check the *.gitignore* file under the root directory that has the correct files and folders ignored from git.
 
 Run `docker-compose up` and optionaly add the `-d` option at the end to run on detached mode to launch the application. By default 
 the Laravel app lives inside the *codebase* folder. The *docker* folder contains a list of sub-folders, each sub-folder has the dockerfiles for the required images and the configuration for each of the containers to be generated. In each sub-folder there's also a README.md file with info and a list of commands to use for the containers.

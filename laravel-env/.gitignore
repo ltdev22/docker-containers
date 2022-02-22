@@ -1,0 +1,4 @@
+docker/docker.env
+codebase/.env
+codebase/vendor/
+codebase/node_modules/
