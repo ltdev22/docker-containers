@@ -17,12 +17,12 @@ services:
         depends_on:
             - php
             - mysql
-            - redis
+            # - redis
         networks:
-            - local_frontend
-            - local_backend
+            - dev_net
         env_file:
             - ./docker/docker.env
+            - ./source/.env
     php:
         container_name: php
         build:
@@ -35,9 +35,10 @@ services:
         volumes:
             - ./source:/var/www/html
         networks:
-            - local_backend
+            - dev_net
         env_file:
             - ./docker/docker.env
+            - ./source/.env
     mysql:
         container_name: mysql
         # image: mysql:5.7
@@ -47,15 +48,10 @@ services:
         ports:
             - 4306:3306
         networks:
-            - local_backend
-        environment:
-            MYSQL_DATABASE: laracommerce
-            MYSQL_USER: laravel
-            MYSQL_PASSWORD: secret
-            MYSQL_ROOT_PASSWORD: root
+            - dev_net
         env_file:
             - ./docker/docker.env
-        #     - ./source/.env
+            - ./source/.env
     composer:
         container_name: composer
         build: 
@@ -67,9 +63,10 @@ services:
         depends_on:
             - php
         networks:
-            - local_backend
+            - dev_net
         env_file:
             - ./docker/docker.env
+            - ./source/.env
     npm:
         container_name: npm
         image: node:lts-alpine
@@ -80,9 +77,10 @@ services:
         volumes:
             - ./source:/var/www/html
         networks:
-            - local_frontend
+            - dev_net
         env_file:
             - ./docker/docker.env
+            - ./source/.env
     artisan:
         container_name: artisan
         build:
@@ -95,22 +93,24 @@ services:
         volumes:
             - ./source:/var/www/html
         networks:
-            - local_backend
+            - dev_net
         env_file:
             - ./docker/docker.env
-    phpunit:
-        container_name: phpunit
-        build:
-            context: .
-            dockerfile: docker/php/Dockerfile
-        entrypoint: ["/var/www/html/vendor/bin/phpunit"]
-        working_dir: /var/www/html/
-        volumes:
-            - ./source:/var/www/html
-        networks:
-            - local_backend
-        env_file:
-            - ./docker/docker.env
+            - ./source/.env
+    # phpunit:
+    #     container_name: phpunit
+    #     build:
+    #         context: .
+    #         dockerfile: docker/php/Dockerfile
+    #     entrypoint: ["/var/www/html/vendor/bin/phpunit"]
+    #     working_dir: /var/www/html/
+    #     volumes:
+    #         - ./source:/var/www/html
+    #     networks:
+    #         - local_backend
+    #     env_file:
+    #         - ./docker/docker.env
+    #         - ./source/.env
     scheduler:
         container_name: scheduler
         build:
@@ -123,9 +123,10 @@ services:
         volumes:
             - ./source:/var/www/html
         networks:
-            - local_backend
+            - dev_net
         env_file:
             - ./docker/docker.env
+            - ./source/.env
     queue:
         container_name: queue
         build:
@@ -138,9 +139,19 @@ services:
         volumes:
             - ./source:/var/www/html
         networks:
-            - local_backend
+            - dev_net
         env_file:
             - ./docker/docker.env
+            - ./source/.env
+    
+    mailhog:
+        image: mailhog/mailhog:latest
+        container_name: mailhog
+        ports:
+            - 1025:1025
+            - 8025:8025
+        networks:
+            - dev_net
     # redis:
     #     container_name: redis
     #     image: redis:alpine
@@ -152,9 +163,9 @@ services:
     #         - local_backend
     #     env_file:
     #         - ./docker/docker.env
+    #         - ./source/.env
 networks:
-    local_backend:
-    local_frontend:
+    dev_net:
         driver: 'bridge'
 volumes:
     # redis:
