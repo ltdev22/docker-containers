@@ -1,10 +1,8 @@
 FROM php:7.3-apache-stretch
 
-LABEL maintainer="Lykourgos Tsirikos <lykourgos.tsirikos@gmail.com>"
-
 # Install required php modules
 RUN docker-php-ext-install pdo_mysql \
-                            mysqli \
+    mysqli \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && a2enmod rewrite

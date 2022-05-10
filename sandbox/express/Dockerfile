@@ -1,7 +1,5 @@
 FROM node:7.7-alpine
 
-LABEL maintainer="Lykourgos Tsirikos <lykourgos.tsirikos@gmail.com>"
-
 RUN mkdir /app
 WORKDIR /app
 

@@ -1,7 +1,5 @@
 FROM node:lts-alpine
 
-LABEL maintainer="Lykourgos Tsirikos <lykourgos.tsirikos@gmail.com>"
-
 # Install nodemon (globally)
 RUN npm install -g nodemon
 
