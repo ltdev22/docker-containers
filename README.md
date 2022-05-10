@@ -1,5 +1,4 @@
-# My docker images
-# Docker images
+# My docker containers
 
 Keeping the containers I have created and use for various different projects organised in one repository :)
 
