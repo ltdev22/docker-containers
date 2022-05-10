@@ -1,5 +1,6 @@
 # My docker images
+# Docker images
 
-Just keeping my Docker images organised in one repository :)
+Keeping the containers I have created and use for various different projects organised in one repository :)
 
-Note to myself: you might actually need the sandbox folder so don't delete it ;)
+Note to myself: Do not delete _sandbox_ folder.
