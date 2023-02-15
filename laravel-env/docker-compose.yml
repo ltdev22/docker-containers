@@ -2,172 +2,91 @@ version: "3.8"
 
 services:
     web:
-        container_name: apache
-        # container_name: nginx
+        container_name: webserver
         build:
             context: .
             dockerfile: docker/apache/Dockerfile
             # dockerfile: docker/nginx/Dockerfile
-            args:
-                - PROJECT_ROOT=${PROJECT_ROOT:-source}
         volumes:
-            - ./source/public:/var/www/html/public
+            - ./public:/var/www/html/public
         ports:
-            - "8888:80"
+            - ${WEB_PORT:-80}:80
         depends_on:
             - php
             - mysql
-            # - redis
         networks:
-            - dev_net
+            - devnet
         env_file:
+            - ./.env
             - ./docker/docker.env
-            - ./source/.env
     php:
         container_name: php
         build:
             context: .
             dockerfile: docker/php/Dockerfile
-            args:
-                - PROJECT_ROOT=${PROJECT_ROOT:-source}
         ports:
-            - "9000:9000"
+            - ${PHP_PORT:-9000}:9000
         volumes:
-            - ./source:/var/www/html
+            - .:/var/www/html
         networks:
-            - dev_net
+            - devnet
         env_file:
+            - ./.env
             - ./docker/docker.env
-            - ./source/.env
     mysql:
         container_name: mysql
-        # image: mysql:5.7
         image: mariadb:10.6
+        # image: mysql:5.7
         volumes:
-            - dbdata:/var/lib/mysql
+            - db_data:/var/lib/mysql
         ports:
-            - 4306:3306
+            - ${MYSQL_PORT:-3306}:3306
         networks:
-            - dev_net
+            - devnet
         env_file:
+            - ./.env
             - ./docker/docker.env
-            - ./source/.env
     composer:
         container_name: composer
-        build: 
+        build:
             context: .
             dockerfile: docker/composer/Dockerfile
         volumes:
-            - ./source:/var/www/html
+            - .:/var/www/html
         working_dir: /var/www/html
-        depends_on:
-            - php
         networks:
-            - dev_net
+            - devnet
         env_file:
+            - ./.env
             - ./docker/docker.env
-            - ./source/.env
     npm:
         container_name: npm
         image: node:lts-alpine
         ports:
-            - 3000:3000
+            - ${NODE_PORT:-3000}:3000
         working_dir: /var/www/html
-        entrypoint: ["npm"]
         volumes:
-            - ./source:/var/www/html
+            - .:/var/www/html
+        # entrypoint: [ 'npm' ]
         networks:
-            - dev_net
+            - devnet
         env_file:
+            - ./.env
             - ./docker/docker.env
-            - ./source/.env
-    artisan:
-        container_name: artisan
-        build:
-            context: .
-            dockerfile: docker/php/Dockerfile
-        entrypoint: ["php", "/var/www/html/artisan"]
-        working_dir: /var/www/html/
-        depends_on:
-            - mysql
-        volumes:
-            - ./source:/var/www/html
-        networks:
-            - dev_net
-        env_file:
-            - ./docker/docker.env
-            - ./source/.env
-    # phpunit:
-    #     container_name: phpunit
-    #     build:
-    #         context: .
-    #         dockerfile: docker/php/Dockerfile
-    #     entrypoint: ["/var/www/html/vendor/bin/phpunit"]
-    #     working_dir: /var/www/html/
-    #     volumes:
-    #         - ./source:/var/www/html
-    #     networks:
-    #         - local_backend
-    #     env_file:
-    #         - ./docker/docker.env
-    #         - ./source/.env
-    scheduler:
-        container_name: scheduler
-        build:
-            context: .
-            dockerfile: docker/php/Dockerfile
-        entrypoint: ["php", "/var/www/html/artisan", "schedule:run", "--verbose", "--no-interaction"]
-        working_dir: /var/www/html/
-        depends_on:
-            - mysql
-        volumes:
-            - ./source:/var/www/html
-        networks:
-            - dev_net
-        env_file:
-            - ./docker/docker.env
-            - ./source/.env
-    queue:
-        container_name: queue
-        build:
-            context: .
-            dockerfile: docker/php/Dockerfile
-        entrypoint: ["php", "/var/www/html/artisan", "queue:work", "--verbose", "--tries=3", "--stop-when-empty"]
-        working_dir: /var/www/html/
-        depends_on:
-            - mysql
-        volumes:
-            - ./source:/var/www/html
-        networks:
-            - dev_net
-        env_file:
-            - ./docker/docker.env
-            - ./source/.env
-    
     mailhog:
         image: mailhog/mailhog:latest
         container_name: mailhog
         ports:
-            - 1025:1025
-            - 8025:8025
+            - ${MAIL_PORT:-1025}:1025
+            - ${MAIL_PORT_2:-8025}:8025
         networks:
-            - dev_net
-    # redis:
-    #     container_name: redis
-    #     image: redis:alpine
-    #     ports:
-    #         - 6379:6379
-    #     volumes:
-    #         - redis:/data
-    #     networks:
-    #         - local_backend
-    #     env_file:
-    #         - ./docker/docker.env
-    #         - ./source/.env
+            - devnet
+        env_file:
+            - ./.env
+            - ./docker/docker.env
 networks:
-    dev_net:
+    devnet:
         driver: 'bridge'
 volumes:
-    # redis:
-    dbdata:
+    db_data:
         driver: 'local'
