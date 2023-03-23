@@ -79,6 +79,17 @@ services:
             - devnet
         env_file:
             - ./.env
+    meilisearch:
+        image: getmeili/meilisearch:v1.0
+        container_name: meilisearch
+        ports:
+            - ${MEILISEARCH_PORT:-7700}:7700
+        networks:
+            - devnet
+        volumes:
+            - ./meili_data:/meili_data
+        env_file:
+            - ./.env
 networks:
     devnet:
         driver: 'bridge'

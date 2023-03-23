@@ -1,4 +1,6 @@
 ./git
 .dockerignore
-source/vendor
+storage/media-library/
 vendor
+node_modules
+meili_data
