@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Configure PHP's executablePath in VS Code to point to the docker PHP container
+# Place the file in the root dir of the project. 
+# This file needs to be executable, so run chmod +x docker_php_exec
+#
+# docker exec -it <CONAINER_NAME> php $@ 
+# Where CONTAINER_NAME is the name of the container that has PHP installled in it.
+#
+# This can be added to gitignore file as it is used mainly for VS Code
+
+docker exec -it php php $@
