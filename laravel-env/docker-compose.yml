@@ -19,7 +19,6 @@ services:
             - devnet
         env_file:
             - ./.env
-            - ./docker/docker.env
     php:
         container_name: php
         build:
@@ -33,7 +32,6 @@ services:
             - devnet
         env_file:
             - ./.env
-            - ./docker/docker.env
     mysql:
         container_name: mysql
         image: mariadb:10.6
@@ -46,7 +44,6 @@ services:
             - devnet
         env_file:
             - ./.env
-            - ./docker/docker.env
     composer:
         container_name: composer
         build:
@@ -59,7 +56,6 @@ services:
             - devnet
         env_file:
             - ./.env
-            - ./docker/docker.env
     npm:
         container_name: npm
         image: node:lts-alpine
@@ -73,7 +69,6 @@ services:
             - devnet
         env_file:
             - ./.env
-            - ./docker/docker.env
     mailhog:
         image: mailhog/mailhog:latest
         container_name: mailhog
@@ -84,7 +79,6 @@ services:
             - devnet
         env_file:
             - ./.env
-            - ./docker/docker.env
 networks:
     devnet:
         driver: 'bridge'
