@@ -113,6 +113,7 @@ To run any composer commands
 
 #### 5. Meilisearch
 
+__Pre-requirement:__ Laravel Scout is required in order to communicate Laravel with Meilisearch, so make sure this is installed first.
 For setting up properly the Meilisearch service we need to use the following environment variables in the `.env` file
 ```
 MEILISEARCH_HOST=http://127.0.0.1:7700
