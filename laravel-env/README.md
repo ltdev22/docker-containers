@@ -88,7 +88,7 @@ cat /usr/local/etc/php/php.ini
 
 To run any artisan commands
 ```
-./develop artisan --version # outputs the Laravel version
+./develop artisan --version        # outputs the Laravel version
 ./develop--run artisan make:model Foo --migration
 ./develop --rm artisan migrate
 ./develop artisan queue:work --queue=foo --tries=3 --stop-when-empty
@@ -99,14 +99,14 @@ __Note:__ to stop queue abd schedule will need to run `docker-compose stop CONTA
 
 #### 5. Composer
 
-__Note:__ For creating a new Laravel application
+__Note:__ For creating a new Laravel application in current working directory ( see . at the end)
 ```
 docker run --rm --interactive --tty --volume $PWD:/app composer create-project laravel/laravel .
 ```
-After that, the composer can be accessible from the `composer` container or using in the terminal `./develop composer`.
+
 To run any composer commands
 ```
-./develop composer require require laravel/breeze --dev      # Install new package
+./develop composer require laravel/breeze --dev      # Install new package
 ./develop composer install -vvv
 ./develop composer dump-autoload -o
 ```
@@ -124,11 +124,9 @@ on docker-compose.yml. For ref see [https://stackoverflow.com/questions/73710554
 
 Flushing and importing to meilisearch is done via artisan:
 ```
-./develop artisan scout:flush "App\Models\Product"
-./develop artisan scout:import "App\Models\Product"
+./develop artisan scout:flush "App\Models\Foo"
+./develop artisan scout:import "App\Models\Foo"
 ```
-
-__Note:__ these steps are required whenever we edit the method `\App\Models\Product:toSearchableArray()`
 
 ## Database
 
