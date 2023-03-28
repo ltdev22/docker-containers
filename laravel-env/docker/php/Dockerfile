@@ -1,47 +1,28 @@
 FROM php:8.1-fpm-alpine
 
-# Install any necessary alpine packages
-RUN apk update && apk add --no-cache --update linux-headers \
-    ${PHPIZE_DEPS} \
-    zip \
-    unzip \
+# Install alpine packages required for the PHP extensions
+RUN apk update && apk add --no-cache --update linux-headers ${PHPIZE_DEPS} && apk add --no-cache \
     libzip-dev \
-    openssh \
-    freetype \
-    libpng \
-    libjpeg-turbo \
     freetype-dev \
-    libpng-dev \
-    jpeg-dev \
-    libwebp-dev \
-    libjpeg \
-    libjpeg-turbo-dev
+    libjpeg-turbo-dev \
+    libpng-dev
 
-# Configure packages
-RUN docker-php-ext-configure gd --enable-gd \
-    --with-freetype=/usr/lib/ \
-    --with-jpeg=/usr/lib/ \
-    --with-webp=/usr
-
-RUN NUMPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
-    && docker-php-ext-install -j${NUMPROC} gd
-
-# Compile native PHP packages
+# Install PHP extensions
 RUN docker-php-ext-install \
+    exif \
+    opcache \
     mysqli \
     pdo \
     pdo_mysql \
-    exif
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
 
-# Install additional packages from PECL like xdebug, redis etc ...
-RUN pecl install zip xdebug \
-    && docker-php-ext-enable zip xdebug \
-    && pecl install igbinary \
-    && docker-php-ext-enable igbinary \
-    && yes | pecl install redis \
-    && docker-php-ext-enable redis
+# Install extensions via pecl
+RUN pecl install redis \
+    && pecl install xdebug \
+    && docker-php-ext-enable redis xdebug
 
-# Set up the php configuration in the container
+# Configure the PHP container
 COPY ./docker/php/php.ini /usr/local/etc/php/php.ini
 COPY ./docker/php/conf.d/*.ini /usr/local/etc/php/conf.d/
 
@@ -49,7 +30,9 @@ COPY ./docker/php/conf.d/*.ini /usr/local/etc/php/conf.d/
 WORKDIR /var/www/html
 COPY . /var/www/html
 
+# Make sure the app is owned by www-data user and group
 RUN chown -R www-data:www-data /var/www/html
+USER www-data
 
 EXPOSE 9000
 CMD ["php-fpm", "-y", "/usr/local/etc/php-fpm.conf", "-R"]
